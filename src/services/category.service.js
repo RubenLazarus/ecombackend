@@ -24,19 +24,23 @@ async function createCategory(category) {
     }
     const Category = await new Categorys(Object.assign(...search));
     const createdCategory = await Category.save();
-    return createdCategory;
+    return {
+        success:true,
+        message:"Category created successfuly",
+        createdCategory
+    };
 }
 async function getAllCategory(query) {
     let search = []
     var pageNumber = 1;
     var pageSize = 0;
-    if (query?.pageNumber) {
-      pageNumber = query.pageNumber;
+    if (query?.pageNumber && Number(query.pageNumber)) {
+      pageNumber = Number(query.pageNumber);
     }
-    if (query?.pageSize) {
-      pageSize = query.pageSize;
+    if (query?.pageSize && Number(query.pageSize)) {
+      pageSize = Number(query.pageSize);
     }
-    if (query.level) {
+    if (query.level && Number(query.level)) {
         search.push({ level: Number(query.level) })
     }
     if (query.parentCategory) {
@@ -63,8 +67,25 @@ async function getAllCategory(query) {
         success:true,
         message:"category list",
         Categorylist,
-        numberOfPages
+        numberOfPages,
+        CategorysCount
     };
+}
+async function deleteCategory(body){
+    const updated= await Categorys.findByIdAndUpdate(body?._id,{$set:{isDeleted:body?.isDeleted}},{new:true})
+    return{
+        success:true,
+        message:"Category Deleted successfully",
+        updated
+    }
+}
+async function updateCategory(body){
+    const updated= await Categorys.findByIdAndUpdate(body?._id,{$set:{...body}},{new:true})
+    return{
+        success:true,
+        message:"Category Updated successfully",
+        updated
+    }
 }
 
 // Find a user's cart and update cart details
@@ -125,4 +146,4 @@ async function getAllCategory(query) {
 //   return 'Item added to cart';
 // }
 
-module.exports = { getAllCategory, createCategory };
+module.exports = { getAllCategory, createCategory,deleteCategory,updateCategory };

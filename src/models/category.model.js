@@ -14,6 +14,22 @@ const categorySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  isDeleted:{
+    type:Boolean,
+    default:false,
+  },
+  isActive:{
+    type:Boolean,
+    default:true,
+  },
+  createdAt:{
+    type:Date,
+    default:new Date()
+  },
+  updatedAt:{
+    type:Date,
+    default:new Date()
+  }
 });
 
 const Category = mongoose.model('categories', categorySchema);
