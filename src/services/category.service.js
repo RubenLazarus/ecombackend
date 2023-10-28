@@ -59,7 +59,7 @@ async function getAllCategory(query) {
   var numberOfPages = pageSize === 0 ? 1 : Math.ceil(CategorysCount / pageSize);
   const Categorylist =await Categorys.aggregate([
     { $match: { $and: search } },
-    // { $sort: { createdAt: -1 } },
+    { $sort: { createdAt: -1 } },
     { $skip: (pageNumber - 1) * pageSize },
     { $limit: pageSize ? pageSize : Number.MAX_SAFE_INTEGER },
   ]);
