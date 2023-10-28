@@ -44,6 +44,11 @@ async function getAllCategory(query) {
             { parentCategory: query.parentCategory }
         )
     }
+    if (query._id) {
+        search.push(
+            { parentCategory: query._id }
+        )
+    }
     const CategorysCount = await Categorys
     .find({ $and: search })
     .countDocuments();
