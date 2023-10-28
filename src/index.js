@@ -40,6 +40,9 @@ app.use("/api/reviews",reviewRouter);
 const ratingRouter=require("./routes/rating.routes.js");
 app.use("/api/ratings",ratingRouter);
 
+const categoryRouter=require("./routes/category.routes.js");
+app.use("/api/category",categoryRouter);
+
 // admin routes handler
 const adminOrderRoutes=require("./routes/adminOrder.routes.js");
 app.use("/api/admin/orders",adminOrderRoutes);
