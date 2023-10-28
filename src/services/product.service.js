@@ -170,12 +170,10 @@ async function createMultipleProduct(products) {
     await createProduct(product);
   }
 }
-
 module.exports = {
   createProduct,
   deleteProduct,
   updateProduct,
   getAllProducts,
   findProductById,
-  createMultipleProduct,
 };

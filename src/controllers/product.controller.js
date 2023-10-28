@@ -99,6 +99,7 @@ const createMultipleProduct= async (req, res) => {
   }
 };
 
+
 module.exports = {
   createProduct,
   deleteProduct,
@@ -107,6 +108,7 @@ module.exports = {
   findProductById,
   findProductByCategory,
   searchProduct,
-  createMultipleProduct
+  createMultipleProduct,
+
 
 };
