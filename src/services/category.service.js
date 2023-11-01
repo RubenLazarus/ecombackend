@@ -50,7 +50,7 @@ async function getAllCategory(query) {
     }
     if (query._id) {
         search.push(
-            { parentCategory: query._id }
+            { _id: query._id }
         )
     }
     const CategorysCount = await Categorys
