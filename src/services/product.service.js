@@ -16,7 +16,7 @@ async function createProduct(reqData) {
 
   let secondLevel = await Category.findOne({
     name: reqData.secondLavelCategory,
-    parentCategory: topLevel._id,
+    // parentCategory: topLevel._id,
   });
 
   if (!secondLevel) {
@@ -31,7 +31,7 @@ async function createProduct(reqData) {
 
   let thirdLevel = await Category.findOne({
     name: reqData.thirdLavelCategory,
-    parentCategory: secondLevel._id,
+    // parentCategory: secondLevel._id,
   });
 
   if (!thirdLevel) {
