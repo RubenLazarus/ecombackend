@@ -56,4 +56,15 @@ async function dashboardData(req,res){
         return res.status(500).send({error:error.message})
     }
 }
-module.exports={createDashboard,getDashboard,deleteDashboard,updateDashboard,dashboardData};
+async function isActiveDashboard(req,res){
+
+    try {
+        const dashboard=await DashboardService.isActiveDashboard(req.body);
+
+        return res.status(200).send({dashboard})
+
+    } catch (error) {
+        return res.status(500).send({error:error.message})
+    }
+}
+module.exports={createDashboard,getDashboard,deleteDashboard,updateDashboard,dashboardData,isActiveDashboard};

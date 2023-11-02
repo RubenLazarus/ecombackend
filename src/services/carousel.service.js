@@ -39,7 +39,7 @@ async function getCarousel(query) {
     }
     if (query._id) {
         search.push(
-            { parentCarousel: query._id }
+            { _id: query._id }
         )
     }
     const CarouselsCount = await Carousel
