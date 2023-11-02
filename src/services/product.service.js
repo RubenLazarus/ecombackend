@@ -4,7 +4,7 @@ const Product = require("../models/product.model");
 // Create a new product
 async function createProduct(reqData) {
   let topLevel = await Category.findOne({
-    name: reqData.topLavelCategory,
+    _id: reqData.topLavelCategory,
     isActive: true,
     isDeleted: false,
   }).lean();
@@ -17,7 +17,7 @@ async function createProduct(reqData) {
   }
 
   let secondLevel = await Category.findOne({
-    name: reqData.secondLavelCategory,
+    _id: reqData.secondLavelCategory,
     parentCategory: topLevel._id,
     isActive: true,
     isDeleted: false,
