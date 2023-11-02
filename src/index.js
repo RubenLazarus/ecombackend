@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 
 app.use(express.json())
+const multer = require("multer") 
 app.use(cors())
 
 app.get("/", (req, res) => {
