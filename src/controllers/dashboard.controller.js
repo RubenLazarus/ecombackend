@@ -45,4 +45,15 @@ async function updateDashboard(req,res){
         return res.status(500).send({error:error.message})
     }
 }
-module.exports={createDashboard,getDashboard,deleteDashboard,updateDashboard};
+async function dashboardData(req,res){
+
+    try {
+        const dashboard=await DashboardService.dashboardData();
+
+        return res.status(200).send({dashboard})
+
+    } catch (error) {
+        return res.status(500).send({error:error.message})
+    }
+}
+module.exports={createDashboard,getDashboard,deleteDashboard,updateDashboard,dashboardData};

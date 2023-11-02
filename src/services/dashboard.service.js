@@ -1,5 +1,8 @@
 const { serve } = require("swagger-ui-express");
 const Dashboard = require("../models/dashboard.model");
+const Carousel = require("../models/carousel.model");
+const Category = require("../models/category.model");
+const Product = require("../models/product.model");
 
 
 
@@ -74,11 +77,19 @@ async function updateDashboard(body){
     }
 }
 async function dashboardData(){
-    const updated= await Dashboard.findByIdAndUpdate(body?._id,{$set:{...body}},{new:true})
+    const dashboardData= await Dashboard.findOne({isActive:true}).lean()
+    const carousels= await Carousel.find({_id:{$in:dashboardData?.carousels}}).lean();
+    const Categorylist= await Category.find({_id:{$in:dashboardData?.categoryIds}}).lean();
+    const ProductList={}
+    for await (const category of Categorylist){
+        const productData = await Product.find({category:category._id}).lean();
+        ProductList[category.name]= productData
+    }
     return{
         success:true,
         message:"Dashboard Updated successfully",
-        updated
+        carousels,
+        ProductList
     }
 }
 module.exports = { getDashboard, createDashboard,deleteDashboard,updateDashboard,dashboardData};
