@@ -61,7 +61,7 @@ async function getCarousel(query) {
     };
 }
 async function deleteCarousel(body){
-    const updated= await Carousels.findByIdAndUpdate(body?._id,{$set:{isDeleted:body?.isDeleted}},{new:true})
+    const updated= await Carousel.findByIdAndUpdate(body?._id,{$set:{isDeleted:body?.isDeleted}},{new:true})
     return{
         success:true,
         message:"Carousel Deleted successfully",
@@ -69,7 +69,7 @@ async function deleteCarousel(body){
     }
 }
 async function updateCarousel(body){
-    const updated= await Carousels.findByIdAndUpdate(body?._id,{$set:{...body}},{new:true})
+    const updated= await Carousel.findByIdAndUpdate(body?._id,{$set:{...body}},{new:true})
     return{
         success:true,
         message:"Carousel Updated successfully",
