@@ -7,8 +7,7 @@ const carouselSchema = new Schema({
         required: true,
     },
     path: {
-        type: String,
-        required: true,
+        type: String
     },
     isActive: {
         type: Boolean,

@@ -37,11 +37,6 @@ async function getDashboard(query) {
     if (query?.pageSize && Number(query.pageSize)) {
       pageSize = Number(query.pageSize);
     }
-    if (query._id) {
-        search.push(
-            { parentCarousel: query._id }
-        )
-    }
     const DashboardCount = await Dashboard
     .find({ $and: search })
     .countDocuments();
@@ -62,6 +57,16 @@ async function getDashboard(query) {
 }
 async function deleteDashboard(body){
     const updated= await Dashboard.findByIdAndUpdate(body?._id,{$set:{isDeleted:body?.isDeleted}},{new:true})
+    return{
+        success:true,
+        message:"Dashboard Deleted successfully",
+        updated
+    }
+}
+async function isActiveDashboard(body){
+    const isupdated= await Dashboard.updateMany({isActive:true},{$set:{isActive:false}},{new:true})
+    const updated= await Dashboard.findByIdAndUpdate(body?._id,{$set:{isActive:body?.isActive}},{new:true})
+
     return{
         success:true,
         message:"Dashboard Deleted successfully",
@@ -92,4 +97,4 @@ async function dashboardData(){
         ProductList
     }
 }
-module.exports = { getDashboard, createDashboard,deleteDashboard,updateDashboard,dashboardData};
+module.exports = { getDashboard, createDashboard,deleteDashboard,updateDashboard,dashboardData,isActiveDashboard};
