@@ -81,13 +81,13 @@ async function updateDashboard(body){
         updated
     }
 }
-async function dashboardData(){
+async function dashboardData(query){
     const dashboardData= await Dashboard.findOne({isActive:true}).lean()
     const carousels= await Carousel.find({_id:{$in:dashboardData?.carousels}}).lean();
     const Categorylist= await Category.find({_id:{$in:dashboardData?.categoryIds}}).lean();
     const ProductList={}
     for await (const category of Categorylist){
-        const productData = await Product.find({category:category._id}).lean();
+        const productData = await Product.find({category:category._id}).limit(query?.limit?query?.limit:0).lean();
         ProductList[category.name]= productData
     }
     return{

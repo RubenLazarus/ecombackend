@@ -48,7 +48,7 @@ async function updateDashboard(req,res){
 async function dashboardData(req,res){
 
     try {
-        const dashboard=await DashboardService.dashboardData();
+        const dashboard=await DashboardService.dashboardData(req.query);
 
         return res.status(200).send({dashboard})
 
