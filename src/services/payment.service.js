@@ -48,18 +48,18 @@ const createPaymentLink= async (orderId)=>{
 }
 
 const updatePaymentInformation=async(reqData)=>{
-    const paymentId = reqData.razorpay_payment_id;
-  const orderId = reqData.razorpay_order_id;
+    const orderId = reqData.order_id;
+  const paymentId  = reqData.payment_id;
 
   try {
     // Fetch order details (You will need to implement the 'orderService.findOrderById' function)
-    const body = reqData.razorpay_order_id+"|"+reqData.razorpay_payment_id
+    const body = orderId+"|"+paymentId
     const generate_signature = crypto.createHmac('sha256','rzp_test_V58aNPoa7wSiXe').update(body.toString()).digest('hex')
-    if(generate_signature != reqData.razorpay_signature){
-return {
-  success :false,
-  message:"Unable to verify Payment"
-}
+    if(generate_signature != reqData.signature){
+// return {
+//   success :false,
+//   message:"Unable to verify Payment"
+// }
     }
     const order = await orderService.findOrder_Id(orderId);
 

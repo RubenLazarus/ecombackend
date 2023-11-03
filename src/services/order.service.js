@@ -161,4 +161,5 @@ module.exports = {
   usersOrderHistory,
   getAllOrders,
   deleteOrder,
+  findOrder_Id
 };
