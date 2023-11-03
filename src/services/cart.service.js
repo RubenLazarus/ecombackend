@@ -66,7 +66,10 @@ async function addCartItem(userId, req) {
     await cart.save();
   }
 
-  return 'Item added to cart';
+  return {
+    success:true,
+    message:"Item Added To Cart Successfully"
+  };
 }
 
 module.exports = { createCart, findUserCart, addCartItem };
