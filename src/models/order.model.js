@@ -55,6 +55,10 @@ const orderSchema = new Schema({
     type: String,
     required: true,
   },
+  order_id: {
+    type: String,
+    required: true,
+  },
   totalItem: {
     type: Number,
     required: true,

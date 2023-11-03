@@ -12,9 +12,10 @@ const createPaymentLink= async (orderId)=>{
         const paymentLinkRequest = {
           amount: order.totalPrice * 100,
           currency: 'INR',
+          receipt:orderId,
           customer: {
             name: order.user.firstName + ' ' + order.user.lastName,
-            contact: order.user.mobile,
+            contact: "7222938282",
             email: order.user.email,
           },
           notify: {

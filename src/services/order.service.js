@@ -2,7 +2,7 @@ const Address = require("../models/address.model.js");
 const Order = require("../models/order.model.js");
 const OrderItem = require("../models/orderItems.js");
 const cartService = require("../services/cart.service.js");
-
+const razorpay = require("../config/razorpayClient");
 async function createOrder(user, shippAddress) {
   let address;
   if (shippAddress._id) {
@@ -33,6 +33,11 @@ async function createOrder(user, shippAddress) {
     const createdOrderItem = await orderItem.save();
     orderItems.push(createdOrderItem);
   }
+const RPOrder= {
+  amount:cart.totalPrice * 100,
+  currency: "INR"
+}
+let createRPorder= await razorpay.orders.create(RPOrder);
 
   const createdOrder = new Order({
     user,
@@ -46,6 +51,7 @@ async function createOrder(user, shippAddress) {
     orderStatus: "PENDING", // Assuming OrderStatus is a string enum or a valid string value
     "paymentDetails.status": "PENDING", // Assuming PaymentStatus is nested under 'paymentDetails'
     createdAt: new Date(),
+    order_id:createRPorder?.id
   });
 
   const savedOrder = await createdOrder.save();
