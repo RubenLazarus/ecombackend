@@ -1,5 +1,7 @@
 const razorpay = require("../config/razorpayClient");
 const orderService=require("../services/order.service.js");
+const cart= require("../models/cart.model")
+const cartItem= require("../models/cartItem.model")
 const crypto = require('crypto')
 
 const createPaymentLink= async (orderId)=>{
@@ -76,7 +78,18 @@ const updatePaymentInformation=async(reqData)=>{
      
 
      
-      await order.save()
+     let saveOrderData= await order.save()
+     const {user,orderItems}= saveOrderData.toObject()
+     const cartData= await cart.findOne({user:user._id}).lean()
+     const cartItems = await cartItem.find({cart:cartData._id}).lean()
+     for await (const carts of cartItems){
+      console.log(carts)
+     }
+     console.log(saveOrderData)
+
+
+
+
     }
     console.log( 'payment status',order);
     const resData = { message: 'Your order is placed', success: true };
