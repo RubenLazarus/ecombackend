@@ -1,5 +1,6 @@
 const razorpay = require("../config/razorpayClient");
 const orderService=require("../services/order.service.js");
+const crypto = require('crypto')
 
 const createPaymentLink= async (orderId)=>{
     // const { amount, currency, receipt, notes } = reqData;
@@ -12,7 +13,7 @@ const createPaymentLink= async (orderId)=>{
         const paymentLinkRequest = {
           amount: order.totalPrice * 100,
           currency: 'INR',
-          receipt:orderId,
+          key: "rzp_test_V58aNPoa7wSiXe", 
           customer: {
             name: order.user.firstName + ' ' + order.user.lastName,
             contact: "7222938282",
@@ -47,12 +48,20 @@ const createPaymentLink= async (orderId)=>{
 }
 
 const updatePaymentInformation=async(reqData)=>{
-    const paymentId = reqData.payment_id;
-  const orderId = reqData.order_id;
+    const paymentId = reqData.razorpay_payment_id;
+  const orderId = reqData.razorpay_order_id;
 
   try {
     // Fetch order details (You will need to implement the 'orderService.findOrderById' function)
-    const order = await orderService.findOrderById(orderId);
+    const body = reqData.razorpay_order_id+"|"+reqData.razorpay_payment_id
+    const generate_signature = crypto.createHmac('sha256','rzp_test_V58aNPoa7wSiXe').update(body.toString()).digest('hex')
+    if(generate_signature != reqData.razorpay_signature){
+return {
+  success :false,
+  message:"Unable to verify Payment"
+}
+    }
+    const order = await orderService.findOrder_Id(orderId);
 
     // Fetch the payment details using the payment ID
     const payment = await razorpay.payments.fetch(paymentId);
@@ -77,5 +86,6 @@ const updatePaymentInformation=async(reqData)=>{
     throw new Error(error.message)
   }
 }
+
 
 module.exports={createPaymentLink,updatePaymentInformation}

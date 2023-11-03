@@ -34,7 +34,7 @@ async function createOrder(user, shippAddress) {
     orderItems.push(createdOrderItem);
   }
 const RPOrder= {
-  amount:cart.totalPrice * 100,
+  amount:cart.totalDiscountedPrice * 100,
   currency: "INR"
 }
 let createRPorder= await razorpay.orders.create(RPOrder);
@@ -97,6 +97,14 @@ async function cancelledOrder(orderId) {
 
 async function findOrderById(orderId) {
   const order = await Order.findById(orderId)
+    .populate("user")
+    .populate({path:"orderItems", populate:{path:"product"}})
+    .populate("shippingAddress");
+  
+  return order;
+}
+async function findOrder_Id(order_id) {
+  const order = await Order.findOne({order_id:order_id})
     .populate("user")
     .populate({path:"orderItems", populate:{path:"product"}})
     .populate("shippingAddress");
