@@ -28,8 +28,9 @@ const findOrderById = async (req, res) => {
 
 const orderHistory = async (req, res) => {
   const user = req.user;
+  const {orderStatus} =req.query
   try {
-    let order = await orderService.usersOrderHistory(user._id);
+    let order = await orderService.usersOrderHistory(user._id,orderStatus);
     return res.status(200).send(order);
   } catch (error) {
     return res.status(500).send(error.message);

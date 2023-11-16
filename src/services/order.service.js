@@ -112,18 +112,19 @@ async function findOrder_Id(order_id) {
   return order;
 }
 
-async function usersOrderHistory(userId) {
+async function usersOrderHistory(userId,orderStatus) {
   try {
+    console.log(userId)
     const orders = await Order.find({
       user: userId,
-      orderStatus: "PLACED",
+      orderStatus:orderStatus?orderStatus:"PLACED",
     })
       .populate({
         path: "orderItems",
         populate: {
           path: "product",
         },
-      })
+      }).sort( { "createdAt": -1 } )
       .lean();
 
 
