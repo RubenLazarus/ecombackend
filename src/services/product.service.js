@@ -99,7 +99,7 @@ async function getAllProducts(reqQuery) {
   let query = Product.find().populate("category");
 
   if (category) {
-    const existCategory = await Category.findOne({ name: category });
+    const existCategory = await Category.findOne({ _id: category });
     if (existCategory)
       query = query.where("category").equals(existCategory._id);
     else return { content: [], currentPage: 1, totalPages: 1 };
