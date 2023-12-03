@@ -114,11 +114,11 @@ async function findOrder_Id(order_id) {
 
 async function usersOrderHistory(userId, orderStatus) {
   try {
-    console.log(userId)
-    const orders = await Order.find({
-      user: userId,
-      orderStatus: orderStatus ? orderStatus : "PLACED",
-    })
+    let obj={user:userId}
+    if(orderStatus){
+      obj.orderStatus=orderStatus
+    }
+    const orders = await Order.find(obj)
       .populate({
         path: "orderItems",
         populate: {
