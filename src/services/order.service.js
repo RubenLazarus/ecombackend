@@ -33,11 +33,11 @@ async function createOrder(user, shippAddress) {
     const createdOrderItem = await orderItem.save();
     orderItems.push(createdOrderItem);
   }
-const RPOrder= {
-  amount:cart.totalDiscountedPrice * 100,
-  currency: "INR"
-}
-let createRPorder= await razorpay.orders.create(RPOrder);
+  const RPOrder = {
+    amount: cart.totalDiscountedPrice * 100,
+    currency: "INR"
+  }
+  let createRPorder = await razorpay.orders.create(RPOrder);
 
   const createdOrder = new Order({
     user,
@@ -51,7 +51,7 @@ let createRPorder= await razorpay.orders.create(RPOrder);
     orderStatus: "PENDING", // Assuming OrderStatus is a string enum or a valid string value
     "paymentDetails.status": "PENDING", // Assuming PaymentStatus is nested under 'paymentDetails'
     createdAt: new Date(),
-    order_id:createRPorder?.id
+    order_id: createRPorder?.id
   });
 
   const savedOrder = await createdOrder.save();
@@ -98,33 +98,33 @@ async function cancelledOrder(orderId) {
 async function findOrderById(orderId) {
   const order = await Order.findById(orderId)
     .populate("user")
-    .populate({path:"orderItems", populate:{path:"product"}})
+    .populate({ path: "orderItems", populate: { path: "product" } })
     .populate("shippingAddress");
-  
+
   return order;
 }
 async function findOrder_Id(order_id) {
-  const order = await Order.findOne({order_id:order_id})
+  const order = await Order.findOne({ order_id: order_id })
     .populate("user")
-    .populate({path:"orderItems", populate:{path:"product"}})
+    .populate({ path: "orderItems", populate: { path: "product" } })
     .populate("shippingAddress");
-  
+
   return order;
 }
 
-async function usersOrderHistory(userId,orderStatus) {
+async function usersOrderHistory(userId, orderStatus) {
   try {
     console.log(userId)
     const orders = await Order.find({
       user: userId,
-      orderStatus:orderStatus?orderStatus:"PLACED",
+      orderStatus: orderStatus ? orderStatus : "PLACED",
     })
       .populate({
         path: "orderItems",
         populate: {
           path: "product",
         },
-      }).sort( { "createdAt": -1 } )
+      }).sort({ "createdAt": -1 })
       .lean();
 
 
@@ -135,18 +135,18 @@ async function usersOrderHistory(userId,orderStatus) {
 }
 
 async function getAllOrders() {
-  return await Order.find().populate({
+  return await Order.find().populate("user").populate({
     path: "orderItems",
     populate: {
       path: "product",
     },
   })
-  .lean();;
+    .lean();;
 }
 
 async function deleteOrder(orderId) {
   const order = await findOrderById(orderId);
-  if(!order)throw new Error("order not found with id ",orderId)
+  if (!order) throw new Error("order not found with id ", orderId)
 
   await Order.findByIdAndDelete(orderId);
 }
