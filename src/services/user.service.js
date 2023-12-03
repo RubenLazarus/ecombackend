@@ -92,8 +92,11 @@ const getAllUsers=async()=>{
 }
 const getAllUsersByRole = async(role)=>{
     try {
-
-        const users=await User.find({role:role});
+        let obj={}
+if(role){
+    obj.role = role
+}
+        const users=await User.find(obj);
         return users;
     } catch (error) {
         console.log("error - ",error)
