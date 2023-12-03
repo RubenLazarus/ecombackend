@@ -135,7 +135,7 @@ async function usersOrderHistory(userId, orderStatus) {
 }
 
 async function getAllOrders() {
-  return await Order.find().populate("user").populate({
+  return await Order.find().populate("user").populate("shippingAddress").populate({
     path: "orderItems",
     populate: {
       path: "product",
