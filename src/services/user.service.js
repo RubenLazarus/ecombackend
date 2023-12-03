@@ -96,7 +96,7 @@ const getAllUsersByRole = async(role)=>{
 if(role){
     obj.role = role
 }
-        const users=await User.find(obj);
+        const users=await User.find(obj).populate("addresses");
         return users;
     } catch (error) {
         console.log("error - ",error)
