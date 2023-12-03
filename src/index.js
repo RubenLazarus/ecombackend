@@ -51,5 +51,7 @@ app.use("/api/dashboard", dashboardRouter);
 // admin routes handler
 const adminOrderRoutes = require("./routes/adminOrder.routes.js");
 app.use("/api/admin/orders", adminOrderRoutes);
+const adminUserRoutes = require("./routes/adminUser.routes.js");
+app.use("/api/admin/users", adminUserRoutes);
 
 module.exports = { app };

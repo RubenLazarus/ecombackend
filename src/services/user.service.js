@@ -90,11 +90,22 @@ const getAllUsers=async()=>{
         throw new Error(error.message)
     }
 }
+const getAllUsersByRole = async(role)=>{
+    try {
+
+        const users=await User.find({role:role});
+        return users;
+    } catch (error) {
+        console.log("error - ",error)
+        throw new Error(error.message)
+    }
+}
 
 module.exports={
     createUser,
     findUserById,
     getUserProfileByToken,
     getUserByEmail,
-    getAllUsers
+    getAllUsers,
+    getAllUsersByRole,
 }
