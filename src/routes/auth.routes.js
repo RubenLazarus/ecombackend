@@ -6,6 +6,7 @@ const multer = require("multer")
 const upload = multer({ dest: 'uploads/' });
 
 router.post("/signup",authController.register)
+router.post("/changeUserPassword",authController.changeUserPassword)
 router.post("/signin",authController.login)
 router.post("/uploadFiles",upload.single('file'),authController.uploadFiles)
 

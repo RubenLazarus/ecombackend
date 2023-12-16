@@ -22,6 +22,17 @@ const register=async(req,res)=>{
         return res.status(500).send({error:error.message})
     }
 }
+const changeUserPassword=async(req,res)=>{
+
+    try {
+        const user=await userService.updatePassword(req.body);
+
+        return res.status(200).send({success:true,message:"Password successfully changed"})
+
+    } catch (error) {
+        return res.status(500).send({error:error.message})
+    }
+}
 const login=async(req,res)=>{
     const {password,email}=req.body
     try {
@@ -73,4 +84,4 @@ const uploadFiles = async(req,res)=>{
     "key": response.key
   }) 
 }
-module.exports={register,login,uploadFiles}
+module.exports={register,login,uploadFiles,changeUserPassword}
