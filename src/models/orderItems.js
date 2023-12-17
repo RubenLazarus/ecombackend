@@ -31,6 +31,14 @@ const orderItemSchema = new Schema({
   deliveryDate: {
     type: Date,
   },
+  isActive:{
+    type:Boolean,
+    default:true
+  },
+  isDeleted:{
+    type:Boolean,
+    default:false
+  }
 });
 
 const OrderItem = mongoose.model('orderItems', orderItemSchema);

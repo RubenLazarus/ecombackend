@@ -31,6 +31,14 @@ const cartSchema = new mongoose.Schema({
     required: true,
     default:0
   },
+  isActive:{
+    type:Boolean,
+    default:true
+  },
+  isDeleted:{
+    type:Boolean,
+    default:false
+  }
 });
 
 const Cart = mongoose.model('cart', cartSchema);

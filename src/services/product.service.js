@@ -67,7 +67,8 @@ async function deleteProduct(productId) {
 
 // Update a product by ID
 async function updateProduct(productId, reqData) {
-  const updatedProduct = await Product.findByIdAndUpdate(productId, reqData);
+  // const getProductById = await Product.findById(productId).lean()
+  const updatedProduct = await Product.findByIdAndUpdate(productId, reqData?.data,{new:true});
   return updatedProduct;
 }
 

@@ -4,7 +4,7 @@ const router=express.Router();
 const paymentController=require("../controllers/payment.controller.js");
 
 router.post("/:id",authenticate,paymentController.createPaymentLink);
-router.get("/",authenticate,paymentController.updatePaymentInformation);
+router.post("/",authenticate,paymentController.updatePaymentInformation);
 
 
 module.exports=router;

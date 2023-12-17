@@ -85,8 +85,9 @@ const deleteAddress=async(req,res)=>{
             return res.status(404).send({error:"token not found"})
         }
         const address=await userService.deleteAddress(jwt,req.body)
+        
 
-        return res.status(200).send({address,success:true,message:"address updated successfully"})
+        return res.status(200).send({address,success:true,message:"address deleted successfully"})
 
     
     } catch (error) {

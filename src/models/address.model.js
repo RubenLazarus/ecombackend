@@ -32,6 +32,14 @@ const userSchema = new mongoose.Schema({
   mobile: {
     type: String,
   },
+  isActive:{
+    type:Boolean,
+    default:true
+  },
+  isDeleted:{
+    type:Boolean,
+    default:false
+  }
 });
 
 const Address = mongoose.model('addresses', userSchema);

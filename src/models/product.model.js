@@ -61,6 +61,14 @@ const productSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  isActive:{
+    type:Boolean,
+    default:true
+  },
+  isDeleted:{
+    type:Boolean,
+    default:false
+  }
 });
 
 const Product = mongoose.model('products', productSchema);

@@ -20,6 +20,14 @@ const reviewSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  isActive:{
+    type:Boolean,
+    default:true
+  },
+  isDeleted:{
+    type:Boolean,
+    default:false
+  }
 });
 
 const Review = mongoose.model('reviews', reviewSchema);

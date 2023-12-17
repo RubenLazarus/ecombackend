@@ -27,15 +27,18 @@ async function updateCartItem(userId, cartItemId, cartItemData) {
     throw new Error("user not found : ",userId)
   }
 
- 
-
+ let product = item['product']
+if(product.quantity<cartItemData.quantity)
+{
+  return {success:false,message:"Stock out of order"}
+}
   if (user.id === userId.toString()) {
     item.quantity = cartItemData.quantity;
     item.price = item.quantity * item.product.price;
     item.discountedPrice = item.quantity * item.product.discountedPrice;
 
     const updatedCartItem = await item.save();
-    return updatedCartItem;
+    return Object.assign(updatedCartItem,{success:true,message:"Successfully added"});
   } else {
     throw new Error("You can't update another user's cart_item");
   }

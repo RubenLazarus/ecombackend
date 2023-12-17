@@ -3,7 +3,7 @@ const orderService = require("../services/order.service");
 
 const getAllOrders = async (req, res) => {
   try {
-    const orders = await orderService.getAllOrders();
+    const orders = await orderService.getAllOrders(req.query);
     return res.status(202).send(orders);
   } catch (error) {
     res.status(500).send({ error: "Something went wrong" });

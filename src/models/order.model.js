@@ -8,10 +8,6 @@ const orderSchema = new Schema({
     ref: 'users',
     // required: true,
   },
-  orderItems: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'orderItems',
-  }],
   orderDate: {
     type: Date,
     required: true,
@@ -39,17 +35,8 @@ const orderSchema = new Schema({
     }
     
   },
-  totalPrice: {
-    type: Number,
-    required: true,
-  },
-  totalDiscountedPrice: {
-    type: Number,
-    required: true,
-  },
   discounte: {
-    type: Number,
-    required: true,
+    type: Number
   },
   orderStatus: {
     type: String,
@@ -57,16 +44,44 @@ const orderSchema = new Schema({
   },
   order_id: {
     type: String,
-    required: true,
   },
   totalItem: {
     type: Number,
-    required: true,
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'products',
+    required: true,
+  },
+  size: {
+    type: String,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  discountedPrice: {
+    type: Number,
+  },
+  deliveryDate: {
+    type: Date,
+  },
+  isActive:{
+    type:Boolean,
+    default:true
+  },
+  isDeleted:{
+    type:Boolean,
+    default:false
+  }
 });
 
 const Order = mongoose.model('orders', orderSchema);

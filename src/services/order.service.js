@@ -18,50 +18,41 @@ async function createOrder(user, shippAddress) {
   }
 
   const cart = await cartService.findUserCart(user._id);
-  const orderItems = [];
 
-  for (const item of cart.cartItems) {
-    const orderItem = new OrderItem({
-      price: item.price,
-      product: item.product,
-      quantity: item.quantity,
-      size: item.size,
-      userId: item.userId,
-      discountedPrice: item.discountedPrice,
-    });
 
-    const createdOrderItem = await orderItem.save();
-    orderItems.push(createdOrderItem);
-  }
   const RPOrder = {
     amount: cart.totalDiscountedPrice * 100,
     currency: "INR"
   }
   let createRPorder = await razorpay.orders.create(RPOrder);
+  let orders = []
+  for await (const item of cart.cartItems) {
+    const createdOrder = new Order({
+      user: item.userId,
+      price: item.price,
+      product: item.product,
+      quantity: item.quantity,
+      size: item.size,
+      discountedPrice: item.discountedPrice,
 
-  const createdOrder = new Order({
-    user,
-    orderItems,
-    totalPrice: cart.totalPrice,
-    totalDiscountedPrice: cart.totalDiscountedPrice,
-    discounte: cart.discounte,
-    totalItem: cart.totalItem,
-    shippingAddress: address,
-    orderDate: new Date(),
-    orderStatus: "PENDING", // Assuming OrderStatus is a string enum or a valid string value
-    "paymentDetails.status": "PENDING", // Assuming PaymentStatus is nested under 'paymentDetails'
-    createdAt: new Date(),
-    order_id: createRPorder?.id
-  });
+      shippingAddress: address,
+      orderDate: new Date(),
+      orderStatus: "PENDING", // Assuming OrderStatus is a string enum or a valid string value
+      "paymentDetails.status": "PENDING", // Assuming PaymentStatus is nested under 'paymentDetails'
+      createdAt: new Date(),
+      order_id: createRPorder?.id
+    });
+    const savedOrder = await createdOrder.save();
+    orders.push(savedOrder)
+  }
 
-  const savedOrder = await createdOrder.save();
+
 
   // for (const item of orderItems) {
   //   item.order = savedOrder;
   //   await item.save();
   // }
-
-  return savedOrder;
+  return Object.assign({ orderItem: orders }, { shippingAddress: address, totalDiscountedPrice: cart.totalDiscountedPrice, discounte: cart.discounte, totalPrice: cart.totalPrice, totalItem: cart.totalItem }, { success: true, message: "orders place successfully" });
 }
 
 async function placedOrder(orderId) {
@@ -98,7 +89,7 @@ async function cancelledOrder(orderId) {
 async function findOrderById(orderId) {
   const order = await Order.findById(orderId)
     .populate("user")
-    .populate({ path: "orderItems", populate: { path: "product" } })
+    .populate('product')
     .populate("shippingAddress");
 
   return order;
@@ -106,7 +97,7 @@ async function findOrderById(orderId) {
 async function findOrder_Id(order_id) {
   const order = await Order.findOne({ order_id: order_id })
     .populate("user")
-    .populate({ path: "orderItems", populate: { path: "product" } })
+    .populate('product')
     .populate("shippingAddress");
 
   return order;
@@ -114,17 +105,11 @@ async function findOrder_Id(order_id) {
 
 async function usersOrderHistory(userId, orderStatus) {
   try {
-    let obj={user:userId}
-    if(orderStatus){
-      obj.orderStatus=orderStatus
+    let obj = { user: userId }
+    if (orderStatus) {
+      obj.orderStatus = orderStatus
     }
-    const orders = await Order.find(obj)
-      .populate({
-        path: "orderItems",
-        populate: {
-          path: "product",
-        },
-      }).sort({ "createdAt": -1 })
+    const orders = await Order.find(obj).populate('product').sort({ "createdAt": -1 })
       .lean();
 
 
@@ -134,14 +119,82 @@ async function usersOrderHistory(userId, orderStatus) {
   }
 }
 
-async function getAllOrders() {
-  return await Order.find().populate("user").populate("shippingAddress").populate({
-    path: "orderItems",
-    populate: {
-      path: "product",
-    },
-  })
-    .lean();;
+async function getAllOrders(query) {
+  try {
+    // return await Order.find().populate("user").populate('product').populate("shippingAddress").lean();;
+    let search = [{ isActive: true }, { isDeleted: false }]
+    var pageNumber = 1;
+    var pageSize = 0;
+    if (query?.pageNumber && Number(query.pageNumber)) {
+      pageNumber = Number(query.pageNumber);
+    }
+    if (query?.pageSize && Number(query.pageSize)) {
+      pageSize = Number(query.pageSize);
+    }
+    const OrderCount = await Order
+      .find({ $and: search })
+      .countDocuments();
+    var numberOfPages = pageSize === 0 ? 1 : Math.ceil(OrderCount / pageSize);
+    const Orderslist = await Order.aggregate([
+      { $match: { $and: search } },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'product',
+          foreignField: '_id',
+          as: 'product',
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user',
+        }
+      },
+      {
+        $lookup: {
+          from: 'addresses',
+          localField: 'shippingAddress',
+          foreignField: '_id',
+          as: 'shippingAddress',
+        }
+      },
+      {
+        $unwind: {
+          path: '$shippingAddress',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: '$product',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: '$user',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      { $skip: (pageNumber - 1) * pageSize },
+      { $limit: pageSize ? pageSize : Number.MAX_SAFE_INTEGER },
+    ]);
+    return {
+      success: true,
+      message: "Order list",
+      Orderslist,
+      numberOfPages,
+      OrderCount
+    };
+  } catch (error) {
+    console.log("error - ", error)
+    throw new Error(error.message)
+  }
+
 }
 
 async function deleteOrder(orderId) {

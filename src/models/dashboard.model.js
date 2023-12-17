@@ -29,7 +29,15 @@ const dashboardSchema = new Schema({
     updatedAt: {
         type: Date,
         default: new Date()
-    }
+    },
+    isActive:{
+        type:Boolean,
+        default:true
+      },
+      isDeleted:{
+        type:Boolean,
+        default:false
+      }
 });
 
 const Dashboard = mongoose.model('dashboard', dashboardSchema);
