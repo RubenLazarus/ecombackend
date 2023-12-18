@@ -105,11 +105,14 @@ async function findOrder_Id(order_id) {
 
 async function usersOrderHistory(userId, orderStatus) {
   try {
+    let search = [{ user: userId }]
     let obj = { user: userId }
     if (orderStatus && orderStatus!='PLACED') {
       obj.orderStatus = orderStatus
+      search.push({orderStatus:orderStatus})
     }
-    const orders = await Order.find(obj).populate('product').sort({ "createdAt": -1 })
+    search.push({orderStatus:{$ne:"PENDING"}})
+    const orders = await Order.find({$and:search}).populate('product').sort({ "createdAt": -1 })
       .lean();
 
 
