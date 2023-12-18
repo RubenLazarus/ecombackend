@@ -106,7 +106,7 @@ async function findOrder_Id(order_id) {
 async function usersOrderHistory(userId, orderStatus) {
   try {
     let obj = { user: userId }
-    if (orderStatus) {
+    if (orderStatus && orderStatus!='PLACED') {
       obj.orderStatus = orderStatus
     }
     const orders = await Order.find(obj).populate('product').sort({ "createdAt": -1 })
