@@ -90,7 +90,7 @@ async function getAllProducts(reqQuery) {
     category,
 
     color,
-    sizes,
+    size,
     minPrice,
     maxPrice,
     minDiscount,
@@ -119,10 +119,9 @@ async function getAllProducts(reqQuery) {
     // query = query.where("color").in([...colorSet]);
   }
 
-  if (sizes) {
-    const sizesSet = new Set(sizes);
+  if (size) {
 
-    query = query.where("sizes.name").in([...sizesSet]);
+    query = query.where("sizes");
   }
 
   if (minPrice && maxPrice) {
