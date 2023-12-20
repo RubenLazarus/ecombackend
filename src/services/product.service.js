@@ -39,7 +39,7 @@ async function createProduct(reqData) {
     imageUrl: reqData.imageUrl,
     brand: reqData.brand,
     price: reqData.price,
-    sizes: reqData.size,
+    size: reqData.size,
     parentCategory:topLevel._id,
     pricePerKG:reqData.pricePerKG,
     quantity: reqData.quantity,
