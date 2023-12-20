@@ -40,6 +40,8 @@ async function createProduct(reqData) {
     brand: reqData.brand,
     price: reqData.price,
     sizes: reqData.size,
+    parentCategory:topLevel._id,
+    pricePerKG:reqData.pricePerKG,
     quantity: reqData.quantity,
     category: secondLevel._id,
   });
@@ -86,6 +88,7 @@ async function findProductById(id) {
 async function getAllProducts(reqQuery) {
   let {
     category,
+
     color,
     sizes,
     minPrice,

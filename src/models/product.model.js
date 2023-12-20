@@ -14,6 +14,10 @@ const productSchema = new mongoose.Schema({
     type: Number,
     // required: true,
   },
+  pricePerKG: {
+    type: Number,
+    // required: true,
+  },
   discountedPrice: {
     type: Number,
   },
@@ -30,10 +34,7 @@ const productSchema = new mongoose.Schema({
   color: {
     type: String,
   },
-  sizes: [{
-    name:{type:String},
-    quantity:{type:Number}
-  }], 
+  sizes: { type: String },
   imageUrl: {
     type: String,
   },
@@ -42,13 +43,13 @@ const productSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'ratings',
     },
-  ], 
+  ],
   reviews: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'reviews',
     },
-  ], 
+  ],
   numRatings: {
     type: Number,
     default: 0,
@@ -56,18 +57,18 @@ const productSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'categories',
-  }, 
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
-  isActive:{
-    type:Boolean,
-    default:true
+  isActive: {
+    type: Boolean,
+    default: true
   },
-  isDeleted:{
-    type:Boolean,
-    default:false
+  isDeleted: {
+    type: Boolean,
+    default: false
   }
 });
 
