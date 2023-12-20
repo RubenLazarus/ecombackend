@@ -121,7 +121,7 @@ async function getAllProducts(reqQuery) {
 
   if (size) {
 
-    query = query.where("sizes");
+    query = query.where("size");
   }
 
   if (minPrice && maxPrice) {
