@@ -58,6 +58,10 @@ const productSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'categories',
   },
+  parentCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'categories',
+  },
   createdAt: {
     type: Date,
     default: Date.now,
