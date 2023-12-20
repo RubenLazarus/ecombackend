@@ -14,6 +14,10 @@ const productSchema = new mongoose.Schema({
     type: Number,
     // required: true,
   },
+  pricePerKG: {
+    type: Number,
+    // required: true,
+  },
   discountedPrice: {
     type: Number,
   },
@@ -30,10 +34,9 @@ const productSchema = new mongoose.Schema({
   color: {
     type: String,
   },
-  sizes: [{
-    name:{type:String},
-    quantity:{type:Number}
-  }], 
+  sizes:{
+    type:Number
+  },
   imageUrl: {
     type: String,
   },
@@ -54,6 +57,10 @@ const productSchema = new mongoose.Schema({
     default: 0,
   },
   category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'categories',
+  }, 
+  parentCategory: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'categories',
   }, 
