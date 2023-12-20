@@ -54,5 +54,7 @@ const adminOrderRoutes = require("./routes/adminOrder.routes.js");
 app.use("/api/admin/orders", adminOrderRoutes);
 const adminUserRoutes = require("./routes/adminUser.routes.js");
 app.use("/api/admin/users", adminUserRoutes);
+const adminProfileRoutes = require("./routes/adimProfile.routes.js");
+app.use("/api/admin/profile", adminProfileRoutes);
 
 module.exports = { app };
