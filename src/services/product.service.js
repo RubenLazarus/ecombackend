@@ -4,7 +4,7 @@ const Product = require("../models/product.model");
 // Create a new product
 async function createProduct(reqData) {
   let topLevel = await Category.findOne({
-    _id: reqData.topLavelCategory,
+    _id: reqData.parentCategory,
     isActive: true,
     isDeleted: false,
   }).lean();
@@ -17,7 +17,7 @@ async function createProduct(reqData) {
   }
 
   let secondLevel = await Category.findOne({
-    _id: reqData.secondLavelCategory,
+    _id: reqData.category,
     parentCategory: topLevel._id,
     isActive: true,
     isDeleted: false,
@@ -40,8 +40,8 @@ async function createProduct(reqData) {
     brand: reqData.brand,
     price: reqData.price,
     size: reqData.size,
-    parentCategory:topLevel._id,
-    pricePerKG:reqData.pricePerKG,
+    parentCategory: topLevel._id,
+    pricePerKG: reqData.pricePerKG,
     quantity: reqData.quantity,
     category: secondLevel._id,
   });
@@ -49,8 +49,8 @@ async function createProduct(reqData) {
   const savedProduct = await product.save();
 
   return {
-    success:true,
-    message:"Product created successfully",
+    success: true,
+    message: "Product created successfully",
     savedProduct
   };
 }
@@ -70,7 +70,7 @@ async function deleteProduct(productId) {
 // Update a product by ID
 async function updateProduct(productId, reqData) {
   // const getProductById = await Product.findById(productId).lean()
-  const updatedProduct = await Product.findByIdAndUpdate(productId, reqData?.data,{new:true});
+  const updatedProduct = await Product.findByIdAndUpdate(productId, reqData?.data, { new: true });
   return updatedProduct;
 }
 
@@ -88,8 +88,7 @@ async function findProductById(id) {
 async function getAllProducts(reqQuery) {
   let {
     category,
-
-    color,
+    parentCategory,
     size,
     minPrice,
     maxPrice,
@@ -98,65 +97,133 @@ async function getAllProducts(reqQuery) {
     stock,
     pageNumber,
     pageSize,
+    searchTerm
   } = reqQuery;
-  (pageSize = pageSize || 10), (pageNumber = pageNumber || 1);
-  let query = Product.find().populate("category");
+  (pageSize = Number(pageSize) || 10), (pageNumber = Number(pageNumber) || 1);
+  let search = [{ isActive: true }, { isDeleted: false }]
+  let sorting = { }
 
-  if (category) {
-    const existCategory = await Category.findOne({ _id: category });
-    if (existCategory)
-      query = query.where("category").equals(existCategory._id);
-    else return { content: [], currentPage: 1, totalPages: 1 };
-  }
-
-  if (color) {
-    const colorSet = new Set(
-      color.split(",").map((color) => color.trim().toLowerCase())
-    );
-    const colorRegex =
-      colorSet.size > 0 ? new RegExp([...colorSet].join("|"), "i") : null;
-    query = query.where("color").regex(colorRegex);
-    // query = query.where("color").in([...colorSet]);
+  if (searchTerm) {
+    search.push({
+      $or: [
+        { 'title': { $regex:searchTerm, $options: 'i' } },
+        { 'category.name': { $regex:searchTerm, $options: 'i' } },
+        { 'parentCategory.name': { $regex:searchTerm, $options: 'i' } },
+      ],
+    })
   }
 
   if (size) {
+    search.push({ size: size })
 
-    query = query.where("size");
+  }
+  if (category) {
+    search.push({ category: category })
+
+  }
+  if (parentCategory) {
+    search.push({ category: parentCategory })
+
   }
 
   if (minPrice && maxPrice) {
-    query = query.where("discountedPrice").gte(minPrice).lte(maxPrice);
+    search.push({ discountedPrice: { "$gte": Number(minPrice), "$lte": Number(maxPrice) } })
   }
 
   if (minDiscount) {
-    query = query.where("discountPersent").gt(minDiscount);
+    search.push({ discountPersent: { "$gt": Number(minDiscount) } })
   }
 
   if (stock) {
     if (stock === "in_stock") {
-      query = query.where("quantity").gt(0);
+      search.push({ quantity: { "$gt": 0 } })
     } else if (stock === "out_of_stock") {
-      query = query.where("quantity").lte(0);
+      search.push({ quantity: { "$lte": 0 } })
     }
   }
 
   if (sort) {
     const sortDirection = sort === "price_high" ? -1 : 1;
-    query = query.sort({ discountedPrice: sortDirection });
+    sorting.discountedPrice=sortDirection 
+
+  }else{
+    sorting.createdAt=-1
   }
+  const Productslist = await Product.aggregate([
+
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'category',
+      }
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'parentCategory',
+        foreignField: '_id',
+        as: 'parentCategory',
+      }
+    },
+    {
+      $unwind: {
+        path: '$category',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $unwind: {
+        path: '$parentCategory',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    { $match: { $and: search } },
+    { $sort: sorting },
+    { $skip: (pageNumber - 1) * pageSize },
+    { $limit: pageSize ? pageSize : Number.MAX_SAFE_INTEGER },
+  ]);
+  const Productslist2 = await Product.aggregate([
+
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'category',
+      }
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'parentCategory',
+        foreignField: '_id',
+        as: 'parentCategory',
+      }
+    },
+    {
+      $unwind: {
+        path: '$category',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $unwind: {
+        path: '$parentCategory',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    { $match: { $and: search } },
+    { $sort: sorting },
+  ]);
+  const totalProductsCounts = Productslist2.length
+  var totalPages = pageSize === 0 ? 1 : Math.ceil(totalProductsCounts / pageSize);
 
   // Apply pagination
-  const totalProducts = await Product.countDocuments(query);
 
-  const skip = (pageNumber - 1) * pageSize;
 
-  query = query.skip(skip).limit(pageSize);
-
-  const products = await query.exec();
-
-  const totalPages = Math.ceil(totalProducts / pageSize);
-
-  return { content: products, currentPage: pageNumber, totalPages: totalPages };
+  return { content: Productslist, currentPage: pageNumber, totalPages: totalPages,totalProductsCounts };
 }
 
 async function createMultipleProduct(products) {
