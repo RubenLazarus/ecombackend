@@ -1,6 +1,6 @@
 const Category = require("../models/category.model");
 const Product = require("../models/product.model");
-
+var mongoose = require('mongoose');
 // Create a new product
 async function createProduct(reqData) {
   let topLevel = await Category.findOne({
@@ -118,11 +118,13 @@ async function getAllProducts(reqQuery) {
 
   }
   if (category) {
-    search.push({ category: category })
+    let temp =new mongoose.Types.ObjectId(category)
+    search.push({ category: temp })
 
   }
   if (parentCategory) {
-    search.push({ category: parentCategory })
+    let temp =new mongoose.Types.ObjectId(parentCategory)
+    search.push({ parentCategory: temp })
 
   }
 
@@ -156,7 +158,7 @@ async function getAllProducts(reqQuery) {
         from: 'categories',
         localField: 'category',
         foreignField: '_id',
-        as: 'category',
+        as: 'categoryData',
       }
     },
     {
@@ -164,18 +166,18 @@ async function getAllProducts(reqQuery) {
         from: 'categories',
         localField: 'parentCategory',
         foreignField: '_id',
-        as: 'parentCategory',
+        as: 'parentCategoryData',
       }
     },
     {
       $unwind: {
-        path: '$category',
+        path: '$categoryData',
         preserveNullAndEmptyArrays: true,
       },
     },
     {
       $unwind: {
-        path: '$parentCategory',
+        path: '$parentCategoryData',
         preserveNullAndEmptyArrays: true,
       },
     },

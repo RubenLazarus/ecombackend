@@ -35,9 +35,9 @@ const productSchema = new mongoose.Schema({
     type: String,
   },
   size: { type: Number },
-  imageUrl: {
-    type: String,
-  },
+  imageUrl:[{
+    type: String
+}],
   ratings: [
     {
       type: mongoose.Schema.Types.ObjectId,
