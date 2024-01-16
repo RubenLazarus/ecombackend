@@ -67,4 +67,7 @@ async function isActiveDashboard(req,res){
         return res.status(500).send({error:error.message})
     }
 }
-module.exports={createDashboard,getDashboard,deleteDashboard,updateDashboard,dashboardData,isActiveDashboard};
+async function adminDashboardData(req,res){
+
+}
+module.exports={createDashboard,getDashboard,deleteDashboard,updateDashboard,dashboardData,isActiveDashboard,adminDashboardData};

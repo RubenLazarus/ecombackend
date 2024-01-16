@@ -21,5 +21,16 @@ const updatePaymentInformation=async(req,res)=>{
     }
 
 }
+const paylater=async(req,res)=>{
 
-module.exports={createPaymentLink,updatePaymentInformation}
+    try {
+       const payment= await paymentService.paylater(req.body)
+        return res.status(200).send({payment})
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+
+}
+
+
+module.exports={createPaymentLink,updatePaymentInformation,paylater}

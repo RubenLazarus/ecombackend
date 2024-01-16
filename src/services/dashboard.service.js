@@ -3,6 +3,8 @@ const Dashboard = require("../models/dashboard.model");
 const Carousel = require("../models/carousel.model");
 const Category = require("../models/category.model");
 const Product = require("../models/product.model");
+const User = require("../models/user.model");
+const Order = require("../models/order.model");
 
 
 
