@@ -29,6 +29,12 @@ const categorySchema = new mongoose.Schema({
   updatedAt:{
     type:Date,
     default:new Date()
+  },
+  imageUrl:{
+    type:String
+  },
+  description:{
+    type:String
   }
 });
 
