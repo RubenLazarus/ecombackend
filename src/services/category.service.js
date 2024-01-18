@@ -10,6 +10,12 @@ async function createCategory(category) {
   if (category?.level) {
     search.push({ level: category.level });
   }
+  if (category?.imageUrl) {
+    search.push({ imageUrl: category.imageUrl });
+  }
+  if (category?.description) {
+    search.push({ description: category.description });
+  }
   if (category?.parentCategory) {
     search.push({ parentCategory: category.parentCategory });
   }
