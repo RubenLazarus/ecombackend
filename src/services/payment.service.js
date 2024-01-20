@@ -101,7 +101,7 @@ const paylater = async(reqData)=>{
       
             // order1.paymentDetails.paymentId = orderData['paymentId'];
             order1.paymentDetails.status = 'Pay Later';
-            order1.orderStatus = 'PLACED';
+            order1.orderStatus = 'Pay Later';
       
       
       
