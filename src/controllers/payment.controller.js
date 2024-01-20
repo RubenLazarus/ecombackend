@@ -50,7 +50,7 @@ const paytm = async (req, res) => {
             (params['ORDER_ID'] = orderId),
             (params['CUST_ID'] = custId),
             (params['TXN_AMOUNT'] = totalAmount),
-            (params['CALLBACK_URL'] = "http://localhost:3002/api/payments/callback"),
+            (params['CALLBACK_URL'] = "https://ecombackend-dgdu.onrender.com/api/payments/callback"),
             (params['EMAIL'] = email),
             (params['MOBILE_NO'] = "7000652279");
 
