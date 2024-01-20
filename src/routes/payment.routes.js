@@ -6,7 +6,7 @@ const paymentController=require("../controllers/payment.controller.js");
 // router.post("/:id",authenticate,paymentController.createPaymentLink);
 router.post("/",authenticate,paymentController.updatePaymentInformation);
 router.post("/paylater",authenticate,paymentController.paylater);
-router.post("/paytm",authenticate,paymentController.paytm);
+router.post("/paytm",paymentController.paytm);
 router.post("/callback",authenticate,paymentController.paytmCallback);
 
 

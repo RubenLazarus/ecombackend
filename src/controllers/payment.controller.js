@@ -50,7 +50,7 @@ const paytm = async (req, res) => {
             (params['ORDER_ID'] = orderId),
             (params['CUST_ID'] = custId),
             (params['TXN_AMOUNT'] = totalAmount),
-            (params['CALLBACK_URL'] = "https://ecombackend-dgdu.onrender.com/api/payments/callback"),
+            (params['CALLBACK_URL'] = "http://localhost:3000/payment/success"),
             (params['EMAIL'] = email),
             (params['MOBILE_NO'] = "7000652279");
 
@@ -60,14 +60,14 @@ const paytm = async (req, res) => {
                 ...params,
                 CHECKSUMHASH: checksum,
             };
-            res.json(paytmParams)
+            return  res.status(200).send({ paytmParams })
 
         }).catch(function (error) {
-            console.log(error);
+            return res.status(500).send(error.message);
         });
 
-        const payment = await paymentService.paylater(req.body)
-        return res.status(200).send({ payment })
+        // const payment = await paymentService.paylater(req.body)
+        //  res.status(200).send({ payment })
     } catch (error) {
         return res.status(500).send(error.message);
     }
