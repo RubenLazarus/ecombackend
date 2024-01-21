@@ -68,6 +68,13 @@ async function isActiveDashboard(req,res){
     }
 }
 async function adminDashboardData(req,res){
+    try {
+        const dashboard=await DashboardService.getAdminDashboardData();
 
+        return res.status(200).send({dashboard})
+
+    } catch (error) {
+        return res.status(500).send({error:error.message})
+    }
 }
 module.exports={createDashboard,getDashboard,deleteDashboard,updateDashboard,dashboardData,isActiveDashboard,adminDashboardData};

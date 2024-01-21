@@ -1,12 +1,12 @@
 
 const ratingService = require('../services/rating.service.js');
 
-const createRating= (req, res) => {
+const createRating= async (req, res) => {
   try {
     const user = req.user
     const reqBody = req.body;
     
-    const rating = ratingService.createRating(reqBody, user);
+    const rating = await ratingService.createRating(reqBody, user);
     
     res.status(202).json(rating);
   } catch (error) {
