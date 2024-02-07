@@ -34,24 +34,22 @@ const productSchema = new mongoose.Schema({
   color: {
     type: String,
   },
-  sizes:{
-    type:Number
-  },
-  imageUrl: {
-    type: String,
-  },
+  size: { type: Number },
+  imageUrl:[{
+    type: String
+}],
   ratings: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'ratings',
     },
-  ], 
+  ],
   reviews: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'reviews',
     },
-  ], 
+  ],
   numRatings: {
     type: Number,
     default: 0,
@@ -59,22 +57,22 @@ const productSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'categories',
-  }, 
+  },
   parentCategory: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'categories',
-  }, 
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
-  isActive:{
-    type:Boolean,
-    default:true
+  isActive: {
+    type: Boolean,
+    default: true
   },
-  isDeleted:{
-    type:Boolean,
-    default:false
+  isDeleted: {
+    type: Boolean,
+    default: false
   }
 });
 

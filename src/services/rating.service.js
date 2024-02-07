@@ -10,8 +10,8 @@ async function createRating(req, user) {
     rating: req.rating,
     createdAt: new Date(),
   });
-  
-  return await rating.save();
+  const ratingResult = await rating.save()
+  return ratingResult;
 }
 
 async function getProductsRating(productId) {

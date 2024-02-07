@@ -10,6 +10,12 @@ async function createCategory(category) {
   if (category?.level) {
     search.push({ level: category.level });
   }
+  if (category?.imageUrl) {
+    search.push({ imageUrl: category.imageUrl });
+  }
+  if (category?.description) {
+    search.push({ description: category.description });
+  }
   if (category?.parentCategory) {
     search.push({ parentCategory: category.parentCategory });
   }
@@ -46,6 +52,11 @@ async function getAllCategory(query) {
   }
   if (query._id) {
     search.push({ _id: query._id });
+  }
+  if(query.searchTerm){
+    search.push({
+      $or:[ { 'name': { $regex: query.searchTerm, $options: 'i' } },]
+    })
   }
   const CategorysCount = await Categorys.find({
     $and: search,

@@ -134,12 +134,26 @@ async function getAllOrders(query) {
     if (query?.pageSize && Number(query.pageSize)) {
       pageSize = Number(query.pageSize);
     }
-    const OrderCount = await Order
-      .find({ $and: search })
-      .countDocuments();
-    var numberOfPages = pageSize === 0 ? 1 : Math.ceil(OrderCount / pageSize);
+    if(query?.orderStatus && query?.orderStatus !=="ALL"){
+      search.push({orderStatus:query?.orderStatus})
+    }
+    if(query?.searchTerm){
+      search.push({
+        $or: [
+          { 'product.title': { $regex: query.searchTerm, $options: 'i' } },
+          { 'shippingAddress.firstName': { $regex: query.searchTerm, $options: 'i' } },
+          { 'shippingAddress.lastName': { $regex: query.searchTerm, $options: 'i' } },
+          { 'shippingAddress.streetAddress': { $regex: query.searchTerm, $options: 'i' } },
+          { 'shippingAddress.city': { $regex: query.searchTerm, $options: 'i' } },
+          { 'shippingAddress.state': { $regex: query.searchTerm, $options: 'i' } },
+          { 'shippingAddress.mobile': { $regex: query.searchTerm, $options: 'i' } },
+        ],
+      })
+    }
+ 
+    
     const Orderslist = await Order.aggregate([
-      { $match: { $and: search } },
+     
       {
         $lookup: {
           from: 'products',
@@ -182,10 +196,60 @@ async function getAllOrders(query) {
           preserveNullAndEmptyArrays: true,
         },
       },
+      { $match: { $and: search } },
       { $sort: { createdAt: -1 } },
       { $skip: (pageNumber - 1) * pageSize },
       { $limit: pageSize ? pageSize : Number.MAX_SAFE_INTEGER },
     ]);
+    const Orderslist2 = await Order.aggregate([
+     
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'product',
+          foreignField: '_id',
+          as: 'product',
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user',
+        }
+      },
+      {
+        $lookup: {
+          from: 'addresses',
+          localField: 'shippingAddress',
+          foreignField: '_id',
+          as: 'shippingAddress',
+        }
+      },
+      {
+        $unwind: {
+          path: '$shippingAddress',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: '$product',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: '$user',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      { $match: { $and: search } },
+      { $sort: { createdAt: -1 } }     
+    ]);
+    const OrderCount =Orderslist2.length 
+    var numberOfPages = pageSize === 0 ? 1 : Math.ceil(OrderCount / pageSize);
     return {
       success: true,
       message: "Order list",

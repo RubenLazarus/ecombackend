@@ -9,5 +9,6 @@ router.post("/deleteDashboard",DashboardController.deleteDashboard)
 router.post("/updateDashboard",DashboardController.updateDashboard)
 router.get("/dashboardData",DashboardController.dashboardData)
 router.get("/isActiveDashboard",DashboardController.isActiveDashboard)
+router.get("/getAdminDashboardData",DashboardController.adminDashboardData)
 
 module.exports=router;

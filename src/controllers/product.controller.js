@@ -25,6 +25,7 @@ async function deleteProduct(req, res) {
 // Update a product by ID
 async function updateProduct(req, res) {
   try {
+    console.log(req.params,"111")
     const productId = req.params.id;
     const product = await productService.updateProduct(productId, req.body);
     return res.json(product);
