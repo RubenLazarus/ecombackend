@@ -245,10 +245,10 @@ const checkStatus = async(req, res) => {
     // CHECK PAYMENT TATUS
     axios.request(options).then(async(response) => {
         if (response.data.success === true) {
-            const url = `http://localhost:3000/payment/success`
+            const url = `https://ecomfrontend-snowy.vercel.app/payment/success`
             return res.redirect(url)
         } else {
-            const url = `http://localhost:3000/payment/failed`
+            const url = `https://ecomfrontend-snowy.vercel.app/payment/failed`
             return res.redirect(url)
         }
     })
