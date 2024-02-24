@@ -4,6 +4,8 @@ const bcrypt=require("bcrypt")
 const cartService=require("../services/cart.service.js")
 const fs = require('fs');
 const AWS = require('aws-sdk');
+const mailService = require('../services/mail.service.js')
+const otpModel = require('../models/otp.model.js')
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -84,4 +86,63 @@ const uploadFiles = async(req,res)=>{
     "key": response.key
   }) 
 }
-module.exports={register,login,uploadFiles,changeUserPassword}
+const forgotPassword= async (req,res)=>{
+  try {
+    let {email}= req.body
+    email = email.toLowerCase();
+    const findUser = await userService.getUserByEmail(email);
+  
+    if (!findUser) {
+      return res.status(200).json({success:false, message: 'User not found With Email ', email});
+  }
+  const otp = await generateOTP();
+  const sendEmail = await mailService.sendOTP(otp,findUser)
+  if (sendEmail && sendEmail.accepted.length > 0) {
+    let object = {
+      email,
+      otp,
+      creatdAt: new Date(),
+    };
+    await otpModel.create(object);
+  }
+  
+  return res.status(200).json({
+    success:true,
+    message:"OTP send to Email address"
+  })
+  } catch (e) {
+    console.log(e)
+  }
+
+}
+const verifyAndChangePassword =async(req,res)=>{
+try {
+  let {otp,email,password}= req.body;
+  const verify = await otpModel.find({email:email.toLowerCase()}).sort({creatdAt:-1})
+  if (verify[0]?.otp != otp) {
+    return res.status(200).json({
+      success: false,
+      message: 'OTP not matched or incorrect',
+    })
+  }
+await otpModel.deleteMany({email:email.toLowerCase()})
+const user = await userService.updatePassword({email:email,password:password});
+if(!user){
+  return res.status(200).json({
+    success: false,
+    message: 'Unable to chanage password',
+  })
+}
+return res.status(200).json({
+  success: true,
+  message: 'Password change successfully',
+})
+} catch (error) {
+  console.log(error);
+}
+}
+const generateOTP=async()=> {
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
+  return otp;
+}
+module.exports={verifyAndChangePassword,register,login,uploadFiles,changeUserPassword,forgotPassword}
