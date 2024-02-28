@@ -177,7 +177,7 @@ const newPayment = async (req, res) => {
             merchantUserId: req.body.MUID,
             name: req.body.name,
             amount: req.body.amount * 100,
-            redirectUrl: `https://ecombackend-dgdu.onrender.com/api/payments/status/${merchantTransactionId}`,
+            redirectUrl: `${process.env.BackendURL}/api/payments/status/${merchantTransactionId}`,
             redirectMode: 'POST',
             mobileNumber: req.body.number,
             paymentInstrument: {
@@ -186,13 +186,14 @@ const newPayment = async (req, res) => {
         };
         const payload = JSON.stringify(data);
         const payloadMain = Buffer.from(payload).toString('base64');
-        const keyIndex = 1;
+        const keyIndex = process.env.keyIndex;
         const string = payloadMain + '/pg/v1/pay' + process.env.SALTKEY;
         const sha256 = crypto.createHash('sha256').update(string).digest('hex');
         const checksum = sha256 + '###' + keyIndex;
 
         // const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
-        const sendbox_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
+        
+        const sendbox_URL = `${process.env.PhonePePaymentURL}/pg/v1/pay`
         const options = {
             method: 'POST',
             url: sendbox_URL,
@@ -233,7 +234,7 @@ const checkStatus = async(req, res) => {
 
     const options = {
     method: 'GET',
-    url: `https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/${merchantId}/${merchantTransactionId}`,
+    url: `${process.env.PhonePePaymentURL}/pg/v1/status/${merchantId}/${merchantTransactionId}`,
     headers: {
         accept: 'application/json',
         'Content-Type': 'application/json',
@@ -245,10 +246,10 @@ const checkStatus = async(req, res) => {
     // CHECK PAYMENT TATUS
     axios.request(options).then(async(response) => {
         if (response.data.success === true) {
-            const url = `https://ecomfrontend-snowy.vercel.app/payment/success`
+            const url = `${process.env.FrontendURL}/payment/success`
             return res.redirect(url)
         } else {
-            const url = `https://ecomfrontend-snowy.vercel.app/payment/failed`
+            const url = `${process.env.FrontendURL}/payment/failed`
             return res.redirect(url)
         }
     })
